@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\Tests\acquia_search_solr\Unit\Commands {
+namespace Drupal\Tests\acquia_search\Unit\Commands {
 
-  use Drupal\acquia_search_solr\Commands\AcquiaSearchSolrCommands;
-  use Drupal\acquia_search_solr\Helper\Storage;
+  use Drupal\acquia_search\Commands\AcquiaSearchCommands;
+  use Drupal\acquia_search\Helper\Storage;
   use Drupal\Component\Datetime\Time;
   use Drupal\Component\Serialization\Json;
   use Drupal\Component\Uuid\Php;
@@ -22,10 +22,10 @@ namespace Drupal\Tests\acquia_search_solr\Unit\Commands {
   use Symfony\Component\Console\Output\OutputInterface;
 
   /**
-   * @coversDefaultClass \Drupal\acquia_search_solr\Commands\AcquiaSearchSolrCommands
+   * @coversDefaultClass \Drupal\acquia_search\Commands\AcquiaSearchCommands
    * @group Acquia Search Solr
    */
-  class AcquiaSearchSolrCommandsTest extends UnitTestCase {
+  class AcquiaSearchCommandsTest extends UnitTestCase {
 
     /**
      * OutputInterface.
@@ -37,7 +37,7 @@ namespace Drupal\Tests\acquia_search_solr\Unit\Commands {
     /**
      * Command.
      *
-     * @var \Drupal\acquia_search_solr\Commands\AcquiaSearchSolrCommands
+     * @var \Drupal\acquia_search\Commands\AcquiaSearchCommands
      */
     protected $command;
 
@@ -77,12 +77,12 @@ namespace Drupal\Tests\acquia_search_solr\Unit\Commands {
       $config_editable->set('api_host', 'https://example.com')
         ->willReturn($config_editable->reveal());
       $config_editable->save()->willReturn($config_editable);
-      $config_factory->get('acquia_search_solr.settings')
+      $config_factory->get('acquia_search.settings')
         ->willReturn($config->reveal());
-      $config_factory->getEditable('acquia_search_solr.settings')
+      $config_factory->getEditable('acquia_search.settings')
         ->willReturn($config_editable->reveal());
 
-      $config_factory->get('acquia_search_solr.settings')
+      $config_factory->get('acquia_search.settings')
         ->willReturn($config->reveal());
 
       $json = json_encode([
@@ -137,7 +137,7 @@ namespace Drupal\Tests\acquia_search_solr\Unit\Commands {
       $uuid = new Php();
       $storage->setUuid($uuid->generate());
 
-      $this->command = new AcquiaSearchSolrCommands($this->cache->reveal());
+      $this->command = new AcquiaSearchCommands($this->cache->reveal());
       $this->output = $this->prophesize(OutputInterface::class);
       $this->command->setOutput($this->output->reveal());
 
@@ -184,21 +184,21 @@ namespace Drupal\Tests\acquia_search_solr\Unit\Commands {
         ->shouldBeCalledOnce();
       $this->output->reveal();
 
-      $this->cache->get('acquia_search_solr.indexes.ABCD-12345')
+      $this->cache->get('acquia_search.indexes.ABCD-12345')
         ->willReturn()
         ->shouldBeCalledOnce();
-      $this->cache->get('acquia_search_solr.indexes.ABCDE-123456')
+      $this->cache->get('acquia_search.indexes.ABCDE-123456')
         ->willReturn()
         ->shouldBeCalledOnce();
-      $this->cache->get('acquia_search_solr.indexes.WXYZ-12345')
+      $this->cache->get('acquia_search.indexes.WXYZ-12345')
         ->willReturn(TRUE)
         ->shouldBeCalledOnce();
-      $this->cache->delete('acquia_search_solr.indexes.WXYZ-12345')
+      $this->cache->delete('acquia_search.indexes.WXYZ-12345')
         ->shouldBeCalledOnce();
-      $this->cache->get('acquia_search_solr.indexes.WXYZ-123456')
+      $this->cache->get('acquia_search.indexes.WXYZ-123456')
         ->willReturn(TRUE)
         ->shouldBeCalledOnce();
-      $this->cache->delete('acquia_search_solr.indexes.WXYZ-123456')
+      $this->cache->delete('acquia_search.indexes.WXYZ-123456')
         ->shouldBeCalledOnce();
       $this->cache->reveal();
 

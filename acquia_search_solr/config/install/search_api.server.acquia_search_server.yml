@@ -5,14 +5,14 @@ dependencies:
     - search_api_solr.solr_field_type.text_phonetic_und_7_0_0
     - search_api_solr.solr_field_type.text_und_6_0_0
   module:
-    - acquia_search_solr
+    - acquia_search
     - search_api_solr
-id: acquia_search_solr_search_api_solr_server
-name: 'Acquia Search Solr Search API Solr server'
+id: acquia_search_server
+name: 'Acquia Search API Solr server'
 description: ''
 backend: search_api_solr
 backend_config:
-  connector: solr_acquia_search_solr
+  connector: solr_acquia_connector
   connector_config:
     scheme: https
     timeout: '10'

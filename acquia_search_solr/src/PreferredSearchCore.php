@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\acquia_search_solr;
+namespace Drupal\acquia_search;
 
-use Drupal\acquia_search_solr\Helper\Storage;
+use Drupal\acquia_search\Helper\Storage;
 
 /**
- * Class PreferredSearchCore.
+ * Return the Preferred search core for Solr.
  *
- * @package Drupal\acquia_search_solr
+ * @package Drupal\acquia_search
  */
 class PreferredSearchCore {
 
@@ -195,10 +195,10 @@ class PreferredSearchCore {
       'sites_foldername' => $sites_foldername,
     ];
 
-    // The Acquia Search Solr module isn't configured properly.
+    // The Acquia Search module isn't configured properly.
     if (!Storage::getIdentifier()) {
       // Let other modules arbitrary alter the list possible cores.
-      \Drupal::moduleHandler()->alter('acquia_search_solr_get_list_of_possible_cores', $possible_core_ids, $context);
+      \Drupal::moduleHandler()->alter('acquia_search_get_list_of_possible_cores', $possible_core_ids, $context);
       return $possible_core_ids;
     }
 
@@ -219,7 +219,7 @@ class PreferredSearchCore {
     }
 
     // Let other modules arbitrary alter the list possible cores.
-    \Drupal::moduleHandler()->alter('acquia_search_solr_get_list_of_possible_cores', $possible_core_ids, $context);
+    \Drupal::moduleHandler()->alter('acquia_search_get_list_of_possible_cores', $possible_core_ids, $context);
 
     return $possible_core_ids;
 

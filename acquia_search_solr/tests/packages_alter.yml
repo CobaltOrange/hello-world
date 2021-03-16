@@ -1,7 +1,4 @@
 ---
-drupal/acquia_search_solr: []
-
-# Remove the Acquia Connector module including the legacy Acquia Search module
-# included with it.
-# @todo Remove this once the 2.x version of the Connector is released.
-drupal/acquia_connector: ~
+drupal/acquia_connector:
+  version: ~3.0
+  version_dev: 3.x-dev

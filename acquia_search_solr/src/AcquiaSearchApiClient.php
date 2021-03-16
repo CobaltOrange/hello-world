@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\acquia_search_solr;
+namespace Drupal\acquia_search;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Crypt;
@@ -9,9 +9,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 /**
- * Class AcquiaSearchApiClient.
+ * Acquia implementation of the Search API Client.
  *
- * @package Drupal\acquia_search_solr
+ * @package Drupal\acquia_search
  */
 class AcquiaSearchApiClient {
 
@@ -78,7 +78,7 @@ class AcquiaSearchApiClient {
       return FALSE;
     }
 
-    $cid = 'acquia_search_solr.indexes.' . $id;
+    $cid = 'acquia_search.indexes.' . $id;
     $now = \Drupal::time()->getRequestTime();
 
     if (($cache = $this->cache->get($cid)) && $cache->expire > $now) {
@@ -162,7 +162,7 @@ class AcquiaSearchApiClient {
       $status_code = $response->getStatusCode();
 
       if ($status_code < 200 || $status_code > 299) {
-        \Drupal::logger('acquia_search_solr')->error("Couldn't connect to search v3 API: @message",
+        \Drupal::logger('acquia_search')->error("Couldn't connect to search v3 API: @message",
           ['@message' => $response->getReasonPhrase()]);
         return FALSE;
       }
@@ -170,20 +170,20 @@ class AcquiaSearchApiClient {
     }
     catch (RequestException $e) {
       if ($e->getCode() == 401) {
-        \Drupal::logger('acquia_search_solr')->error("Couldn't connect to search v3 API:
+        \Drupal::logger('acquia_search')->error("Couldn't connect to search v3 API:
           Received a 401 response from the API. @message", ['@message' => $e->getMessage()]);
       }
       elseif ($e->getCode() == 404) {
-        \Drupal::logger('acquia_search_solr')->error("Couldn't connect to search v3 API:
+        \Drupal::logger('acquia_search')->error("Couldn't connect to search v3 API:
           Received a 404 response from the API. @message", ['@message' => $e->getMessage()]);
       }
       else {
-        \Drupal::logger('acquia_search_solr')->error("Couldn't connect to search v3 API:
+        \Drupal::logger('acquia_search')->error("Couldn't connect to search v3 API:
           @message", ['@message' => $e->getMessage()]);
       }
     }
     catch (\Exception $e) {
-      \Drupal::logger('acquia_search_solr')->error("Couldn't connect to search v3 API: @message",
+      \Drupal::logger('acquia_search')->error("Couldn't connect to search v3 API: @message",
         ['@message' => $e->getMessage()]);
     }
 

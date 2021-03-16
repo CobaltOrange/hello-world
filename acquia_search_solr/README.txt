@@ -30,13 +30,13 @@ however, poses risks to your data that you should be aware of.
 
 Hidden settings
 ----------------
-- acquia_search_solr.settings.read_only
+- acquia_search.settings.read_only
     Boolean value; if TRUE then there is enforcing of read-only mode.
 
     Example settings.php override:
-    # $config['acquia_search_solr.settings']['read_only'] = TRUE;
+    # $config['acquia_search.settings']['read_only'] = TRUE;
 
-- acquia_search_solr.settings.override_search_core
+- acquia_search.settings.override_search_core
     String that contains the ID of an Acquia Search core. When provided (and if
     the core is available) this will force the connection to use that core
     instead of letting the module auto-switch.
@@ -46,16 +46,16 @@ Hidden settings
     Here's an example for settings.php:
 
     # Override Acquia Search Solr search core.
-    # $config['acquia_search_solr.settings']['override_search_core'] =
+    # $config['acquia_search.settings']['override_search_core'] =
       'ABCD-12345.prod.mysite';
 
-- acquia_search_solr.settings.extract_query_handler_option
+- acquia_search.settings.extract_query_handler_option
     String that contains the extract query handler option. Default value is
     "update/extract"'.
-    See SearchApiSolrAcquiaSearchSolrConnector::getExtractQuery() for details.
+    See SearchApiSolrSearchApiSolrAcquiaConnector::getExtractQuery() for details.
 
     Here's an example for settings.php:
 
     # Override Acquia Search Solr extract query handler option..
-    # $config['acquia_search_solr.settings']['extract_query_handler_option'] =
+    # $config['acquia_search.settings']['extract_query_handler_option'] =
     # 'some/value';

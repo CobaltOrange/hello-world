@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\Tests\acquia_search_solr\Unit\Helper;
+namespace Drupal\Tests\acquia_search\Unit\Helper;
 
-use Drupal\acquia_search_solr\Helper\Runtime;
-use Drupal\acquia_search_solr\Helper\Storage;
+use Drupal\acquia_search\Helper\Runtime;
+use Drupal\acquia_search\Helper\Storage;
 use Drupal\Component\Datetime\Time;
 use Drupal\Component\Uuid\Php;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -21,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * @coversDefaultClass \Drupal\acquia_search_solr\Helper\Runtime
+ * @coversDefaultClass \Drupal\acquia_search\Helper\Runtime
  * @group Acquia Search Solr
  */
 class RuntimeTest extends UnitTestCase {
@@ -75,11 +75,11 @@ class RuntimeTest extends UnitTestCase {
     $config_editable = $this->prophesize(Config::class);
     $config_editable->set('api_host', 'https://example.com')->willReturn($config_editable->reveal());
     $config_editable->save()->willReturn($config_editable);
-    $config_factory->get('acquia_search_solr.settings')->willReturn($config->reveal());
-    $config_factory->getEditable('acquia_search_solr.settings')->willReturn($config_editable->reveal());
+    $config_factory->get('acquia_search.settings')->willReturn($config->reveal());
+    $config_factory->getEditable('acquia_search.settings')->willReturn($config_editable->reveal());
     $this->config = $config;
 
-    $config_factory->get('acquia_search_solr.settings')
+    $config_factory->get('acquia_search.settings')
       ->willReturn($config->reveal());
 
     // \Drupal::time().
@@ -149,7 +149,7 @@ class RuntimeTest extends UnitTestCase {
   /**
    * Tests shouldEnforceReadOnlyMode.
    *
-   * @covers \Drupal\acquia_search_solr\Helper\Runtime::shouldEnforceReadOnlyMode
+   * @covers \Drupal\acquia_search\Helper\Runtime::shouldEnforceReadOnlyMode
    */
   public function testReadOnlyMode() {
 
@@ -159,7 +159,7 @@ class RuntimeTest extends UnitTestCase {
     $this->config->get('read_only')->willReturn(TRUE);
     $this->config->reveal();
 
-    $this->moduleHandler->alter('acquia_search_solr_should_enforce_read_only', Argument::exact(TRUE))
+    $this->moduleHandler->alter('acquia_search_should_enforce_read_only', Argument::exact(TRUE))
       ->shouldBeCalledOnce();
     $this->moduleHandler->reveal();
 
@@ -168,7 +168,7 @@ class RuntimeTest extends UnitTestCase {
     $this->config->get('read_only')->willReturn(FALSE);
     $this->config->reveal();
 
-    $this->moduleHandler->alter('acquia_search_solr_should_enforce_read_only', Argument::exact(FALSE))
+    $this->moduleHandler->alter('acquia_search_should_enforce_read_only', Argument::exact(FALSE))
       ->shouldBeCalledOnce();
     $this->moduleHandler->reveal();
 
@@ -179,7 +179,7 @@ class RuntimeTest extends UnitTestCase {
   /**
    * Tests isAcquiaServer.
    *
-   * @covers \Drupal\acquia_search_solr\Helper\Runtime::isAcquiaServer
+   * @covers \Drupal\acquia_search\Helper\Runtime::isAcquiaServer
    */
   public function testIsAcquiaServer() {
 
@@ -200,7 +200,7 @@ class RuntimeTest extends UnitTestCase {
     $this->assertFalse(Runtime::isAcquiaServer($server->reveal()));
     $server->getBackendConfig()->willReturn(['connector' => '1']);
     $this->assertFalse(Runtime::isAcquiaServer($server->reveal()));
-    $server->getBackendConfig()->willReturn(['connector' => 'solr_acquia_search_solr']);
+    $server->getBackendConfig()->willReturn(['connector' => 'solr_acquia_connector']);
     $this->assertTrue(Runtime::isAcquiaServer($server->reveal()));
 
   }
@@ -210,7 +210,7 @@ class RuntimeTest extends UnitTestCase {
    *
    * @dataProvider getAhDatabaseRoleDataProvider
    *
-   * @covers \Drupal\acquia_search_solr\Helper\Runtime::getAhDatabaseRole
+   * @covers \Drupal\acquia_search\Helper\Runtime::getAhDatabaseRole
    */
   public function testGetAhDatabaseRole($options, $connection_ifno, $expected) {
     $role = Runtime::getAhDatabaseRole($options, $connection_ifno);
@@ -226,75 +226,75 @@ class RuntimeTest extends UnitTestCase {
   public function getAhDatabaseRoleDataProvider() {
     return [
       [
-        ['database' => 'acquia_search_solr_8'],
+        ['database' => 'acquia_search_8'],
         [
           'default' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
           'role_name_with_underscores' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
         ],
         'role_name_with_underscores',
       ],
       [
-        ['database' => 'acquia_search_solr_8'],
+        ['database' => 'acquia_search_8'],
         [
           'default' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
           '_role_name_with_underscores' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
         ],
         '_role_name_with_underscores',
       ],
       [
-        ['database' => 'acquia_search_solr_8'],
+        ['database' => 'acquia_search_8'],
         [
           'default' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
           '_role_nam__e_with_underscores__' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
         ],
         '_role_nam__e_with_underscores__',
       ],
       [
-        ['database' => 'acquia_search_solr_8'],
+        ['database' => 'acquia_search_8'],
         [
           'default' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
           'wi\th//s  p\e?c..i}}a{l-c+h)ar(*s' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
         ],
         'withspecialchars',
       ],
       [
-        ['database' => 'acquia_search_solr_8'],
+        ['database' => 'acquia_search_8'],
         [
           'default' => [
             'default' => [
-              'database' => 'acquia_search_solr_8',
+              'database' => 'acquia_search_8',
             ],
           ],
         ],

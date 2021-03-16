@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\acquia_search_solr\Helper;
+namespace Drupal\acquia_search\Helper;
 
-use Drupal\acquia_search_solr\AcquiaSearchApiClient;
-use Drupal\acquia_search_solr\PreferredSearchCore;
+use Drupal\acquia_search\AcquiaSearchApiClient;
+use Drupal\acquia_search\PreferredSearchCore;
 use Drupal\Core\Database\Database;
 use Drupal\search_api\Entity\Server;
 
@@ -17,7 +17,7 @@ class Runtime {
   /**
    * Preferred search core service.
    *
-   * @var \Drupal\acquia_search_solr\PreferredSearchCore
+   * @var \Drupal\acquia_search\PreferredSearchCore
    */
   protected static $preferredSearchCoreService;
 
@@ -60,7 +60,7 @@ class Runtime {
    * Helps to determines which search core should be used and whether it is
    * available within the subscription.
    *
-   * @return \Drupal\acquia_search_solr\PreferredSearchCore
+   * @return \Drupal\acquia_search\PreferredSearchCore
    *   Preferred search core service.
    */
   public static function getPreferredSearchCoreService(): PreferredSearchCore {
@@ -105,7 +105,7 @@ class Runtime {
       $read_only = TRUE;
     }
 
-    \Drupal::moduleHandler()->alter('acquia_search_solr_should_enforce_read_only', $read_only);
+    \Drupal::moduleHandler()->alter('acquia_search_should_enforce_read_only', $read_only);
 
     return $read_only;
 
@@ -117,7 +117,7 @@ class Runtime {
    * @param string $application_uuid
    *   Acquia application UUID.
    *
-   * @return \Drupal\acquia_search_solr\AcquiaSearchApiClient
+   * @return \Drupal\acquia_search\AcquiaSearchApiClient
    *   Acquia Search API Client.
    */
   public static function getAcquiaSearchApiClient(string $application_uuid = NULL): AcquiaSearchApiClient {
@@ -152,7 +152,7 @@ class Runtime {
 
     $backend_config = $server->getBackendConfig();
 
-    return !empty($backend_config['connector']) && $backend_config['connector'] === 'solr_acquia_search_solr';
+    return !empty($backend_config['connector']) && $backend_config['connector'] === 'solr_acquia_connector';
 
   }
 

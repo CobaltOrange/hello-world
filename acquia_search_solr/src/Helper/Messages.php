@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\acquia_search_solr\Helper;
+namespace Drupal\acquia_search\Helper;
 
-use Drupal\acquia_search_solr\Plugin\SolrConnector\AcquiaSearchSolrConnector;
+use Drupal\acquia_search\Plugin\SolrConnector\SearchApiSolrAcquiaConnector;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\search_api\Entity\Server;
@@ -111,8 +111,8 @@ class Messages {
       $items[] = Messages::getServerUrlMessage($configuration);
 
       // Report on the behavior chosen.
-      if (isset($configuration['overridden_by_acquia_search_solr'])) {
-        $items[] = Messages::getOverriddenModeMessage($configuration['overridden_by_acquia_search_solr']);
+      if (isset($configuration['overridden_by_acquia_search'])) {
+        $items[] = Messages::getOverriddenModeMessage($configuration['overridden_by_acquia_search']);
       }
 
       $items[] = Messages::getServerAvailabilityMessage($server);
@@ -142,10 +142,10 @@ class Messages {
   public static function getOverriddenModeMessage(int $override) {
 
     switch ($override) {
-      case AcquiaSearchSolrConnector::READ_ONLY:
+      case SearchApiSolrAcquiaConnector::READ_ONLY:
         return ['#markup' => '<span class="color-warning">' . t('Acquia Search Solr module automatically enforced read-only mode on this connection.') . '</span>'];
 
-      case AcquiaSearchSolrConnector::OVERRIDE_AUTO_SET:
+      case SearchApiSolrAcquiaConnector::OVERRIDE_AUTO_SET:
         return t('Acquia Search Solr module automatically selected the proper Solr connection based on the detected environment and configuration.');
 
     }

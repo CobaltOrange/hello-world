@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\acquia_search_solr\Commands;
+namespace Drupal\acquia_search\Commands;
 
-use Drupal\acquia_search_solr\Helper\Runtime;
-use Drupal\acquia_search_solr\Helper\Storage;
+use Drupal\acquia_search\Helper\Runtime;
+use Drupal\acquia_search\Helper\Storage;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drush\Commands\DrushCommands;
@@ -19,7 +19,7 @@ use Drush\Commands\DrushCommands;
  *   - http://cgit.drupalcode.org/devel/tree/src/Commands/DevelCommands.php
  *   - http://cgit.drupalcode.org/devel/tree/drush.services.yml
  */
-class AcquiaSearchSolrCommands extends DrushCommands {
+class AcquiaSearchCommands extends DrushCommands {
 
   /**
    * Cache service.
@@ -29,7 +29,7 @@ class AcquiaSearchSolrCommands extends DrushCommands {
   private $cache;
 
   /**
-   * AcquiaSearchSolrCommands constructor.
+   * AcquiaSearchCommands constructor.
    *
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   Cache backend service.
@@ -59,7 +59,7 @@ class AcquiaSearchSolrCommands extends DrushCommands {
    * @usage acquia:ss:cores --format=json
    *   Lists all available Acquia search cores in JSON format.
    *
-   * @validate-module-enabled acquia_search_solr
+   * @validate-module-enabled acquia_search
    *
    * @throws \Exception
    *   If no cores available.
@@ -116,7 +116,7 @@ class AcquiaSearchSolrCommands extends DrushCommands {
    *   Clears the Acquia Search cores cache for the ABC-12345 subscription
    *   identifier.
    *
-   * @validate-module-enabled acquia_search_solr
+   * @validate-module-enabled acquia_search
    *
    * @throws \Exception
    *   In case of the invalid Acquia subscription identifier provided via id
@@ -137,7 +137,7 @@ class AcquiaSearchSolrCommands extends DrushCommands {
       throw new \Exception('Provide a valid Acquia subscription identifier');
     }
 
-    $cid = sprintf("acquia_search_solr.indexes.%s", $id);
+    $cid = sprintf("acquia_search.indexes.%s", $id);
     if ($this->cache->get($cid)) {
       $this->cache->delete($cid);
       $this->output()->writeln(dt('Cache cleared for @id', ['@id' => $id]));
@@ -169,7 +169,7 @@ class AcquiaSearchSolrCommands extends DrushCommands {
    * @usage acquia:ss:cores:possible --format=json
    *   Lists all possible Acquia search cores in JSON format.
    *
-   * @validate-module-enabled acquia_search_solr
+   * @validate-module-enabled acquia_search
    *
    * @throws \Exception
    *   In case if no possible search cores found.
@@ -210,7 +210,7 @@ class AcquiaSearchSolrCommands extends DrushCommands {
    * @usage acquia:ss:cores:preferred
    *   Display preferred Acquia search core.
    *
-   * @validate-module-enabled acquia_search_solr
+   * @validate-module-enabled acquia_search
    *
    * @throws \Exception
    *   In case if no preferred search core available.

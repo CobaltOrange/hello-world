@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Hooks specific to the acquia_search_solr module.
+ * Hooks specific to the acquia_search module.
  */
 
 /**
@@ -32,7 +32,7 @@
  *   ];
  * @endcode
  */
-function hook_acquia_search_solr_get_list_of_possible_cores_alter(array &$possible_core_ids, array $context) {
+function hook_acquia_search_get_list_of_possible_cores_alter(array &$possible_core_ids, array $context) {
   if (empty($context['ah_env'])) {
     $possible_core_ids[] = 'WXYZ-12345.dev.mysitedev_db';
   }
@@ -44,7 +44,7 @@ function hook_acquia_search_solr_get_list_of_possible_cores_alter(array &$possib
  * @param bool $read_only
  *   The read-only flag. TRUE if a read-only mode enforced on a search core.
  */
-function hook_acquia_search_solr_should_enforce_read_only_alter(&$read_only) {
+function hook_acquia_search_should_enforce_read_only_alter(&$read_only) {
   if (!$_ENV['AH_SITE_ENVIRONMENT']) {
     $read_only = TRUE;
   }

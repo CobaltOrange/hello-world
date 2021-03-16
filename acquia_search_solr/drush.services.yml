@@ -1,6 +1,6 @@
 services:
-  acquia_search_solr.commands:
-    class: \Drupal\acquia_search_solr\Commands\AcquiaSearchSolrCommands
+  acquia_search.commands:
+    class: Drupal\acquia_search\Commands\AcquiaSearchCommands
     arguments:
       - '@cache.default'
     tags:

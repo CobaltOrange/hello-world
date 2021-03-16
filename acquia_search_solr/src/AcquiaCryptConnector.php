@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\acquia_search_solr;
+namespace Drupal\acquia_search;
 
 /**
  * Class CryptConnector.
  *
- * @package Drupal\acquia_search_solr
+ * @package Drupal\acquia_search
  */
 class AcquiaCryptConnector {
 

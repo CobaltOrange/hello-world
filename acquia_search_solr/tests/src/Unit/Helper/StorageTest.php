@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\Tests\acquia_search_solr\Unit\Helper;
+namespace Drupal\Tests\acquia_search\Unit\Helper;
 
-use Drupal\acquia_search_solr\Helper\Storage;
+use Drupal\acquia_search\Helper\Storage;
 use Drupal\Component\Uuid\Php;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -14,7 +14,7 @@ use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
 /**
- * @coversDefaultClass \Drupal\acquia_search_solr\Helper\Storage
+ * @coversDefaultClass \Drupal\acquia_search\Helper\Storage
  * @group Acquia Search Solr
  */
 class StorageTest extends UnitTestCase {
@@ -31,12 +31,12 @@ class StorageTest extends UnitTestCase {
         $state->get($arguments[0], Argument::any())
           ->willReturn($arguments[1]);
       });
-    $state->get('acquia_search_solr.version')->willReturn(NULL);
+    $state->get('acquia_search.version')->willReturn(NULL);
     $state->deleteMultiple([
-      'acquia_search_solr.api_key',
-      'acquia_search_solr.identifier',
-      'acquia_search_solr.uuid',
-      'acquia_search_solr.version',
+      'acquia_search.api_key',
+      'acquia_search.identifier',
+      'acquia_search.uuid',
+      'acquia_search.version',
     ])->willReturn();
 
     $config_factory = $this->prophesize(ConfigFactoryInterface::class);
@@ -48,14 +48,14 @@ class StorageTest extends UnitTestCase {
     $config_editable = $this->prophesize(Config::class);
     $config_editable->set('api_host', 'https://example.com')->willReturn($config_editable->reveal());
     $config_editable->save()->willReturn($config_editable);
-    $config_factory->get('acquia_search_solr.settings')->willReturn($config->reveal());
-    $config_factory->getEditable('acquia_search_solr.settings')->willReturn($config_editable->reveal());
+    $config_factory->get('acquia_search.settings')->willReturn($config->reveal());
+    $config_factory->getEditable('acquia_search.settings')->willReturn($config_editable->reveal());
 
-    $config_factory->get('acquia_search_solr.settings')
+    $config_factory->get('acquia_search.settings')
       ->willReturn($config->reveal());
 
     $entension_list_module = $this->prophesize(ModuleExtensionList::class);
-    $entension_list_module->getExtensionInfo('acquia_search_solr')->willReturn(['version' => 'testing-8.x-1.x']);
+    $entension_list_module->getExtensionInfo('acquia_search')->willReturn(['version' => 'testing-3.x']);
 
     $container = new ContainerBuilder();
     $container->set('state', $state->reveal());
@@ -97,7 +97,7 @@ class StorageTest extends UnitTestCase {
     $storage->setUuid($uuid);
     $this->assertEquals($uuid, Storage::getUuid());
 
-    $this->assertEquals(Storage::getVersion(), 'testing-8.x-1.x');
+    $this->assertEquals(Storage::getVersion(), 'testing-3.x');
 
     $storage->deleteAllData();
 

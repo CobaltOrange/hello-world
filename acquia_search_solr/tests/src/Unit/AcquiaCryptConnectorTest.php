@@ -1,12 +1,12 @@
 <?php
 
-namespace Drupal\Tests\acquia_search_solr\Unit;
+namespace Drupal\Tests\acquia_search\Unit;
 
-use Drupal\acquia_search_solr\AcquiaCryptConnector;
+use Drupal\acquia_search\AcquiaCryptConnector;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\acquia_search_solr\AcquiaCryptConnector
+ * @coversDefaultClass \Drupal\acquia_search\AcquiaCryptConnector
  * @group Acquia Search Solr
  */
 class AcquiaCryptConnectorTest extends UnitTestCase {

@@ -1,5 +1,5 @@
-# Schema for the configuration files of the acquia_search_solr module.
-acquia_search_solr.settings:
+# Schema for the configuration files of the acquia_search module.
+acquia_search.settings:
   type: config_object
   label: 'Acquia Search Solr settings'
   mapping:

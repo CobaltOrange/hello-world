@@ -1,10 +1,11 @@
 <?php
 
-namespace Drupal\acquia_search_solr\EventSubscriber;
+namespace Drupal\acquia_search\EventSubscriber;
 
-use Drupal\acquia_search_solr\AcquiaCryptConnector;
-use Drupal\acquia_search_solr\Helper\Runtime;
-use Drupal\acquia_search_solr\Helper\Storage;
+use Drupal\acquia_search\AcquiaCryptConnector;
+use Drupal\acquia_search\Helper\Flood;
+use Drupal\acquia_search\Helper\Runtime;
+use Drupal\acquia_search\Helper\Storage;
 use Drupal\Component\Utility\Crypt;
 use Drupal\search_api_solr\Solarium\EventDispatcher\EventProxy;
 use Solarium\Core\Client\Adapter\AdapterHelper;
@@ -16,13 +17,13 @@ use Solarium\Exception\HttpException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class AcquiaSearchSolrSubscriber.
+ * Class SearchSubscriber.
  *
  * Extends Solarium plugin for the Acquia Search module: authenticate, etc.
  *
- * @package Drupal\acquia_search_solr\EventSubscriber
+ * @package Drupal\acquia_search\EventSubscriber
  */
-class AcquiaSearchSolrSubscriber extends AbstractPlugin implements EventSubscriberInterface {
+class SearchSubscriber extends AbstractPlugin implements EventSubscriberInterface {
 
   /**
    * {@inheritdoc}
@@ -77,6 +78,18 @@ class AcquiaSearchSolrSubscriber extends AbstractPlugin implements EventSubscrib
       return;
     }
 
+    // Run Flood control checks.
+    if (!Flood::isAllowed($request->getHandler())) {
+      // If request should be blocked, show an error message.
+      $message = 'The Acquia Search flood control mechanism has blocked a Solr query due to API usage limits. You should retry in a few seconds. Contact the site administrator if this message persists.';
+      \Drupal::messenger()->addError($message);
+
+      // Build a static response which avoids a network request to Solr.
+      $response = new Response($message, ['HTTP/1.1 429 Too Many Requests']);
+      $event->setResponse($response);
+      $event->stopPropagation();
+      return;
+    }
     $request->addParam('request_id', uniqid(), TRUE);
     if ($request->getFileUpload()) {
       $helper = new AdapterHelper();
@@ -106,7 +119,7 @@ class AcquiaSearchSolrSubscriber extends AbstractPlugin implements EventSubscrib
 
     $cookie = $this->calculateAuthCookie($raw_post_data, $this->nonce);
     $request->addHeader('Cookie: ' . $cookie);
-    $request->addHeader('User-Agent: ' . 'acquia_search_solr/' . Storage::getVersion());
+    $request->addHeader('User-Agent: ' . 'acquia_search/' . Storage::getVersion());
 
   }
 
@@ -119,11 +132,18 @@ class AcquiaSearchSolrSubscriber extends AbstractPlugin implements EventSubscrib
    * @throws \Solarium\Exception\HttpException
    */
   public function postExecuteRequest(EventProxy $event) {
+    if (!($this->client instanceof Client)) {
+      return;
+    }
 
     $response = $event->getResponse();
 
     if ($response->getStatusCode() != 200) {
-      throw new HttpException($response->getStatusMessage());
+      throw new HttpException(
+        $response->getStatusMessage(),
+        $response->getStatusCode(),
+        $response->getBody()
+      );
     }
 
     if ($event->getRequest()->getHandler() == 'admin/ping') {
@@ -267,7 +287,7 @@ class AcquiaSearchSolrSubscriber extends AbstractPlugin implements EventSubscrib
       return '';
     }
 
-    $time = \Drupal::time()->getRequestTime();
+    $time = time();
 
     $hmac = hash_hmac('sha1', $time . $nonce . $string, $derived_key);
 

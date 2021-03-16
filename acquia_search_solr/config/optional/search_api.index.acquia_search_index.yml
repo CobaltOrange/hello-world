@@ -7,7 +7,7 @@ dependencies:
     - node
   config:
     - field.storage.node.body
-    - search_api.server.acquia_search_solr_search_api_solr_server
+    - search_api.server.acquia_search_server
 third_party_settings:
   search_api_solr:
     finalize: false
@@ -30,8 +30,8 @@ third_party_settings:
         fragsize: 0
     advanced:
       index_prefix: ''
-id: acquia_search_solr_search_api_solr_index
-name: 'Acquia Search Solr Search API Solr index'
+id: acquia_search_index
+name: 'Acquia Search Solr Index'
 description: ''
 read_only: false
 field_settings:
@@ -146,4 +146,4 @@ tracker_settings:
 options:
   index_directly: false
   cron_limit: 50
-server: acquia_search_solr_search_api_solr_server
+server: acquia_search_server

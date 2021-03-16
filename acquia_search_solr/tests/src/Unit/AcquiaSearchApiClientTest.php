@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\Tests\acquia_search_solr\Unit;
+namespace Drupal\Tests\acquia_search\Unit;
 
-use Drupal\acquia_search_solr\AcquiaSearchApiClient;
-use Drupal\acquia_search_solr\Helper\Storage;
+use Drupal\acquia_search\AcquiaSearchApiClient;
+use Drupal\acquia_search\Helper\Storage;
 use Drupal\Component\Datetime\Time;
 use Drupal\Component\Uuid\Php;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -21,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * @coversDefaultClass \Drupal\acquia_search_solr\AcquiaSearchApiClient
+ * @coversDefaultClass \Drupal\acquia_search\AcquiaSearchApiClient
  * @group Acquia Search Solr
  */
 class AcquiaSearchApiClientTest extends UnitTestCase {
@@ -53,7 +53,7 @@ class AcquiaSearchApiClientTest extends UnitTestCase {
       ->will(function ($arguments) use ($state) {
         $state->get($arguments[0], Argument::any())->willReturn($arguments[1]);
       });
-    $state->get('acquia_search_solr.version')->willReturn(NULL);
+    $state->get('acquia_search.version')->willReturn(NULL);
 
     // \Drupal::time().
     $time = $this->prophesize(Time::class);
@@ -63,7 +63,7 @@ class AcquiaSearchApiClientTest extends UnitTestCase {
     $logger_factory = $this->prophesize(LoggerChannelFactory::class);
     $logger = $this->prophesize(LoggerChannel::class);
     $logger->error(Argument::any(), Argument::any())->willReturn();
-    $logger_factory->get('acquia_search_solr')->willReturn($logger->reveal());
+    $logger_factory->get('acquia_search')->willReturn($logger->reveal());
 
     $config_factory = $this->prophesize(ConfigFactoryInterface::class);
     $config = $this->prophesize(ImmutableConfig::class);
@@ -73,8 +73,8 @@ class AcquiaSearchApiClientTest extends UnitTestCase {
     $config_editable = $this->prophesize(Config::class);
     $config_editable->set('api_host', 'https://example.com')->willReturn($config_editable->reveal());
     $config_editable->save()->willReturn($config_editable);
-    $config_factory->get('acquia_search_solr.settings')->willReturn($config->reveal());
-    $config_factory->getEditable('acquia_search_solr.settings')->willReturn($config_editable->reveal());
+    $config_factory->get('acquia_search.settings')->willReturn($config->reveal());
+    $config_factory->getEditable('acquia_search.settings')->willReturn($config_editable->reveal());
 
     $container = new ContainerBuilder();
     $container->set('state', $state->reveal());
@@ -173,16 +173,16 @@ class AcquiaSearchApiClientTest extends UnitTestCase {
 
     // Invalid Network Id - cache FALSE for minute.
     $randomId = $this->randomMachineName();
-    $this->cacheBackend->get('acquia_search_solr.indexes.' . $randomId)->willReturn();
-    $this->cacheBackend->set('acquia_search_solr.indexes.' . $randomId, FALSE, \Drupal::time()->getRequestTime() + 60)->willReturn();
+    $this->cacheBackend->get('acquia_search.indexes.' . $randomId)->willReturn();
+    $this->cacheBackend->set('acquia_search.indexes.' . $randomId, FALSE, \Drupal::time()->getRequestTime() + 60)->willReturn();
     $this->assertFalse($client->getSearchIndexes($randomId));
 
     // Valid Network Id - cache it for a day.
-    $this->cacheBackend->get('acquia_search_solr.indexes.WXYZ-12345')->willReturn();
-    $this->cacheBackend->set('acquia_search_solr.indexes.WXYZ-12345', Argument::any(), \Drupal::time()->getRequestTime() + 86400)->willReturn();
+    $this->cacheBackend->get('acquia_search.indexes.WXYZ-12345')->willReturn();
+    $this->cacheBackend->set('acquia_search.indexes.WXYZ-12345', Argument::any(), \Drupal::time()->getRequestTime() + 86400)->willReturn();
     $this->assertEquals($indexes, $client->getSearchIndexes('WXYZ-12345'));
-    $this->cacheBackend->get('acquia_search_solr.indexes.WXYZ-12345')->shouldHaveBeenCalledTimes(1);
-    $this->cacheBackend->set('acquia_search_solr.indexes.WXYZ-12345', Argument::any(), \Drupal::time()->getRequestTime() + 86400)->shouldHaveBeenCalledTimes(1);
+    $this->cacheBackend->get('acquia_search.indexes.WXYZ-12345')->shouldHaveBeenCalledTimes(1);
+    $this->cacheBackend->set('acquia_search.indexes.WXYZ-12345', Argument::any(), \Drupal::time()->getRequestTime() + 86400)->shouldHaveBeenCalledTimes(1);
 
   }
 
@@ -228,21 +228,21 @@ class AcquiaSearchApiClientTest extends UnitTestCase {
       'data' => $indexes,
       'expire' => \Drupal::time()->getRequestTime() + (24 * 60 * 60),
     ];
-    $this->cacheBackend->get('acquia_search_solr.indexes.WXYZ-12345')->willReturn($fresh_cache);
+    $this->cacheBackend->get('acquia_search.indexes.WXYZ-12345')->willReturn($fresh_cache);
     $client->getSearchIndexes('WXYZ-12345');
 
     // New cache should not have been set when there is already a valid cache.
-    $this->cacheBackend->set('acquia_search_solr.indexes.WXYZ-12345', $indexes, \Drupal::time()->getRequestTime() + (24 * 60 * 60))->shouldHaveBeenCalledTimes(0);
+    $this->cacheBackend->set('acquia_search.indexes.WXYZ-12345', $indexes, \Drupal::time()->getRequestTime() + (24 * 60 * 60))->shouldHaveBeenCalledTimes(0);
 
     $expired_cache = (object) [
       'data' => $indexes,
       'expire' => 0,
     ];
-    $this->cacheBackend->get('acquia_search_solr.indexes.WXYZ-12345')->willReturn($expired_cache);
+    $this->cacheBackend->get('acquia_search.indexes.WXYZ-12345')->willReturn($expired_cache);
     $client->getSearchIndexes('WXYZ-12345');
 
     // When the current cache value is expired, it should have set a new one.
-    $this->cacheBackend->set('acquia_search_solr.indexes.WXYZ-12345', $indexes, \Drupal::time()->getRequestTime() + (24 * 60 * 60))->shouldHaveBeenCalledTimes(1);
+    $this->cacheBackend->set('acquia_search.indexes.WXYZ-12345', $indexes, \Drupal::time()->getRequestTime() + (24 * 60 * 60))->shouldHaveBeenCalledTimes(1);
   }
 
 }

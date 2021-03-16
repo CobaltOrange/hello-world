@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\Tests\acquia_search_solr\Unit;
+namespace Drupal\Tests\acquia_search\Unit;
 
-use Drupal\acquia_search_solr\Helper\Storage;
-use Drupal\acquia_search_solr\PreferredSearchCore;
+use Drupal\acquia_search\Helper\Storage;
+use Drupal\acquia_search\PreferredSearchCore;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -13,7 +13,7 @@ use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
 /**
- * @coversDefaultClass \Drupal\acquia_search_solr\PreferredSearchCore
+ * @coversDefaultClass \Drupal\acquia_search\PreferredSearchCore
  * @group Acquia Search Solr
  */
 class PreferredSearchCoreTest extends UnitTestCase {
@@ -51,7 +51,7 @@ class PreferredSearchCoreTest extends UnitTestCase {
     $config->get('read_only')->willReturn(FALSE);
     $this->config = $config;
 
-    $config_factory->get('acquia_search_solr.settings')
+    $config_factory->get('acquia_search.settings')
       ->willReturn($config->reveal());
 
     $module_handler = $this->prophesize(ModuleHandlerInterface::class);
@@ -215,7 +215,7 @@ class PreferredSearchCoreTest extends UnitTestCase {
   }
 
   /**
-   * Tests hook_acquia_search_solr_get_list_of_possible_cores_alter.
+   * Tests hook_acquia_search_get_list_of_possible_cores_alter.
    */
   public function testGetListOfPossibleCoresAlterEmpty() {
 
@@ -238,7 +238,7 @@ class PreferredSearchCoreTest extends UnitTestCase {
       'identifier' => '',
       'sites_foldername' => 'default',
     ];
-    $this->moduleHandler->alter('acquia_search_solr_get_list_of_possible_cores', $expected, $context)
+    $this->moduleHandler->alter('acquia_search_get_list_of_possible_cores', $expected, $context)
       ->shouldBeCalledOnce();
     $this->moduleHandler->reveal();
 
@@ -246,7 +246,7 @@ class PreferredSearchCoreTest extends UnitTestCase {
   }
 
   /**
-   * Tests hook_acquia_search_solr_get_list_of_possible_cores_alter.
+   * Tests hook_acquia_search_get_list_of_possible_cores_alter.
    */
   public function testGetListOfPossibleCoresAlterNonHosted() {
 
@@ -268,7 +268,7 @@ class PreferredSearchCoreTest extends UnitTestCase {
       'identifier' => 'ABC-12345',
       'sites_foldername' => 'default',
     ];
-    $this->moduleHandler->alter('acquia_search_solr_get_list_of_possible_cores', $expected, $context)
+    $this->moduleHandler->alter('acquia_search_get_list_of_possible_cores', $expected, $context)
       ->shouldBeCalledOnce();
     $this->moduleHandler->reveal();
 
@@ -277,7 +277,7 @@ class PreferredSearchCoreTest extends UnitTestCase {
   }
 
   /**
-   * Tests hook_acquia_search_solr_get_list_of_possible_cores_alter.
+   * Tests hook_acquia_search_get_list_of_possible_cores_alter.
    */
   public function testGetListOfPossibleCoresAlterHostedDev() {
 
@@ -300,7 +300,7 @@ class PreferredSearchCoreTest extends UnitTestCase {
       'identifier' => 'ABC-12345',
       'sites_foldername' => 'sitefolder1',
     ];
-    $this->moduleHandler->alter('acquia_search_solr_get_list_of_possible_cores', $expected, $context)->shouldBeCalledOnce();
+    $this->moduleHandler->alter('acquia_search_get_list_of_possible_cores', $expected, $context)->shouldBeCalledOnce();
     $this->moduleHandler->reveal();
 
     $core_service->getListOfPossibleCores();
